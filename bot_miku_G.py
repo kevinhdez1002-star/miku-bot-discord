@@ -3,6 +3,25 @@ import discord
 import google.generativeai as genai
 from dotenv import load_dotenv
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
+from flask import Flask
+from threading import Thread
+
+# Servidor web para UptimeRobot
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Miku Bot is alive! 💙"
+
+def run():
+    app.run(host='0.0.0.0', port=8080)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+
+# Iniciar servidor web
+keep_alive()
 
 print("🚀 Iniciando Hatsune Miku Bot en Render...")
 
@@ -149,6 +168,7 @@ async def on_ready():
     print(f'🔍 Búsqueda web: ACTIVADA')
     print(f'🎯 Modo investigación: HABILITADO')
     print(f'🌐 Bot funcionando 24/7 en Render!')
+    print(f'🖥️ Servidor web activo en puerto 8080')
 
 @client.event
 async def on_message(message):
