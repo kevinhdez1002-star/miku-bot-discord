@@ -5,23 +5,43 @@ from dotenv import load_dotenv
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from flask import Flask
 from threading import Thread
+import time
 
-# Servidor web para UptimeRobot
-app = Flask('')
+print("🖥️ Configurando servidor web para UptimeRobot...")
 
-@app.route('/')
-def home():
-    return "Miku Bot is alive! 💙"
+# Servidor web mejorado
+def start_web_server():
+    try:
+        app = Flask(__name__)
+        
+        @app.route('/')
+        def home():
+            return "Miku Bot is alive! 💙"
+        
+        @app.route('/health')
+        def health():
+            return "OK", 200
+        
+        def run():
+            print("🚀 Iniciando servidor web en puerto 8080...")
+            app.run(host='0.0.0.0', port=8080, debug=False, use_reloader=False)
+        
+        server_thread = Thread(target=run)
+        server_thread.daemon = True
+        server_thread.start()
+        time.sleep(2)  # Dar tiempo para que inicie
+        print("✅ Servidor web iniciado correctamente")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error iniciando servidor web: {e}")
+        return False
 
-def run():
-    app.run(host='0.0.0.0', port=8080)
-
-def keep_alive():
-    t = Thread(target=run)
-    t.start()
-
-# Iniciar servidor web
-keep_alive()
+# Iniciar servidor
+if start_web_server():
+    print("🌐 Servidor web listo para UptimeRobot")
+else:
+    print("⚠️ Servidor web falló, pero el bot continuará")
 
 print("🚀 Iniciando Hatsune Miku Bot en Render...")
 
@@ -168,7 +188,6 @@ async def on_ready():
     print(f'🔍 Búsqueda web: ACTIVADA')
     print(f'🎯 Modo investigación: HABILITADO')
     print(f'🌐 Bot funcionando 24/7 en Render!')
-    print(f'🖥️ Servidor web activo en puerto 8080')
 
 @client.event
 async def on_message(message):
